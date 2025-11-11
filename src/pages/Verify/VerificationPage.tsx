@@ -19,16 +19,28 @@ export default function VerificationPage() {
         setIsLoading(false);
         return;
       }
+
       setIsLoading(true);
       const { data, error: rpcError } = await supabase.rpc<CertificateVerificationResult>(
         "get_certificate_by_token",
         { token },
       );
-      setResult(data ?? null);
-      setError(rpcError);
+
+      if (rpcError) {
+        setError(rpcError);
+        setResult(null);
+      } else if (!data) {
+        setError({ message: "Certificate not found", status: 404, code: "not_found" });
+        setResult(null);
+      } else {
+        setResult(data);
+        setError(null);
+      }
+
       setIsLoading(false);
     };
-    load();
+
+    void load();
   }, [token]);
 
   return (
