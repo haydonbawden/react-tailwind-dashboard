@@ -2,22 +2,20 @@ import { BrowserRouter as Router, Routes, Route } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
-import UserProfiles from "./pages/UserProfiles";
-import Videos from "./pages/UiElements/Videos";
-import Images from "./pages/UiElements/Images";
-import Alerts from "./pages/UiElements/Alerts";
-import Badges from "./pages/UiElements/Badges";
-import Avatars from "./pages/UiElements/Avatars";
-import Buttons from "./pages/UiElements/Buttons";
-import LineChart from "./pages/Charts/LineChart";
-import BarChart from "./pages/Charts/BarChart";
-import Calendar from "./pages/Calendar";
-import BasicTables from "./pages/Tables/BasicTables";
-import FormElements from "./pages/Forms/FormElements";
-import Blank from "./pages/Blank";
+import Unauthorized from "./pages/OtherPage/Unauthorized";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import AuditList from "./pages/Audits/AuditList";
+import AuditDetail from "./pages/Audits/AuditDetail";
+import UploadLanding from "./pages/Uploads/UploadLanding";
+import UploadWizard from "./pages/Uploads/UploadWizard";
+import AuditTypesPage from "./pages/Admin/AuditTypes";
+import EmailTemplatesPage from "./pages/Admin/Templates/EmailTemplates";
+import DocxTemplatesPage from "./pages/Admin/Templates/DocxTemplates";
+import ImportDataPage from "./pages/Admin/ImportData";
+import VerificationPage from "./pages/Verify/VerificationPage";
+import { ProtectedRoute } from "./components/common/ProtectedRoute";
 
 export default function App() {
   return (
@@ -25,39 +23,26 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-          {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
-            <Route index path="/" element={<Home />} />
-
-            {/* Others Page */}
-            <Route path="/profile" element={<UserProfiles />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/blank" element={<Blank />} />
-
-            {/* Forms */}
-            <Route path="/form-elements" element={<FormElements />} />
-
-            {/* Tables */}
-            <Route path="/basic-tables" element={<BasicTables />} />
-
-            {/* Ui Elements */}
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/avatars" element={<Avatars />} />
-            <Route path="/badge" element={<Badges />} />
-            <Route path="/buttons" element={<Buttons />} />
-            <Route path="/images" element={<Images />} />
-            <Route path="/videos" element={<Videos />} />
-
-            {/* Charts */}
-            <Route path="/line-chart" element={<LineChart />} />
-            <Route path="/bar-chart" element={<BarChart />} />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AppLayout />}>
+              <Route index path="/" element={<Home />} />
+              <Route path="/audits" element={<AuditList />} />
+              <Route path="/audits/:id" element={<AuditDetail />} />
+              <Route path="/upload" element={<UploadLanding />} />
+              <Route path="/upload/:auditId" element={<UploadWizard />} />
+              <Route element={<ProtectedRoute roles={["Admin"]} />}>
+                <Route path="/admin/audit-types" element={<AuditTypesPage />} />
+                <Route path="/admin/templates/email" element={<EmailTemplatesPage />} />
+                <Route path="/admin/templates/docx" element={<DocxTemplatesPage />} />
+                <Route path="/admin/import" element={<ImportDataPage />} />
+              </Route>
+              <Route path="/unauthorised" element={<Unauthorized />} />
+            </Route>
           </Route>
 
-          {/* Auth Layout */}
-          <Route path="/signin" element={<SignIn />} />
+          <Route path="/login" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
-
-          {/* Fallback Route */}
+          <Route path="/verify/:token" element={<VerificationPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
